@@ -1,0 +1,48 @@
+.notifications-container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.notification-page {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notification-item {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    transition: 0.2s;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.notification-item:hover {
+    background-color: #f5f5f5;
+}
+
+.time {
+    font-size: 12px;
+    color: gray;
+}
+
+.delete {
+    background-color: transparent;
+    width: 30px;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.6;
+    transition: 0.2s;
+    box-shadow: none;
+}
+
+.delete:hover {
+    opacity: 1;
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+}

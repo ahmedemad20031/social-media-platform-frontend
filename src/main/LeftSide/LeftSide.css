@@ -1,0 +1,172 @@
+.Left_side {
+    background-color: transparent !important;
+
+    margin-left: 10px;
+}
+
+
+
+.suggest {
+    background: white;
+    width: 330px;
+    padding: 15px;
+    margin-top: 0 !important;
+    border-radius: 12px;
+    margin-bottom: 10px;
+
+}
+
+.suggest_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.suggest_box {
+    margin-top: 5px;
+}
+
+.suggest_item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.suggest_item_info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+button {
+    background-color: #1877f2;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    width: 100px;
+}
+
+button:hover {
+    border: none;
+}
+
+.notifications {
+    margin-top: 15px;
+}
+
+.notification_item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 3px;
+}
+
+.notification_item {
+    display: flex;
+    border-radius: 10px;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+
+.notification_item_info p {
+    margin-bottom: 0px;
+}
+
+span {
+    color: #1877f2;
+
+    font-size: 16px;
+    font-weight: 600;
+    margin-left: 4px;
+}
+
+.notification_item_btn {
+    background-color: transparent;
+    width: fit-content;
+    border: none;
+    flex-grow: 1;
+    box-shadow: none;
+    align-self: flex-end;
+}
+
+.notification_item_btn:hover {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+
+
+.delete:hover {
+    border: none;
+}
+
+@media (max-width: 991px) {
+    .Left_side {
+        padding: 0px;
+    }
+
+    .suggest {
+        padding: 0px;
+        width: 100%;
+
+    }
+
+    .suggest h5 {
+        font-size: 12px;
+    }
+
+    .show-mobile-left {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        right: 0;
+        padding-top: 40px;
+        width: 260px;
+        height: 100vh;
+        background-color: #ffffff;
+        z-index: 10000;
+
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+
+        animation: slideInRight 0.3s ease-out;
+    }
+
+    h4 {
+        font-size: 14px;
+    }
+
+    .markasread {
+        width: 150px !important;
+    }
+
+    .close-left-btn {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+
+    }
+}
+
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}

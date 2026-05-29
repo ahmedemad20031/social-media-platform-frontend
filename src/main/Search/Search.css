@@ -1,0 +1,34 @@
+.search-box {
+    display: none
+}
+
+.search-input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+@media (max-width: 768px) {
+    .search-box {
+        width: 100%;
+        display: block;
+        padding: 10px;
+    }
+
+    .search-input {
+        font-size: 13px;
+        width: 70%;
+        padding: 10px;
+    }
+
+    .search-btn {
+        padding: 10px 0px;
+        width: 70px;
+    }
+
+
+}
