@@ -15,7 +15,12 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     setNotifications: (state, action) => {
-      state.notifications = action.payload;
+      const data = action.payload;
+
+      state.notifications = Array.isArray(data)
+        ? data
+        : [...state.notifications, data];
+
       localStorage.setItem(
         "notifications",
         JSON.stringify(state.notifications),
