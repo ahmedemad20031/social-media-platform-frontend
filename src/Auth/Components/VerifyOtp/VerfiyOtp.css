@@ -94,4 +94,8 @@ button:active {
     .verfiy div {
         width: 80%;
     }
+
+    .otp-inputs {
+        width: 80%;
+    }
 }

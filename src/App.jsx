@@ -51,25 +51,28 @@ function App() {
     <div>
       <Toaster position="top-center" />
       <Routes>
-        <Route path="/" Component={Login} />
-        <Route path="/register" Component={Register} />
-        <Route path="/verify-otp" Component={VerfiyOtp} />
-        <Route path="/resetpassword" Component={ResetPassword} />
-        <Route path="/home" Component={Home} />
-        <Route path="/:id/likes" Component={Likes} />
-        <Route path="/profile" Component={Profile} />
-        <Route path="/:id/comments" Component={Comments} />
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<VerfiyOtp />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
+
+        <Route path="/home" element={<Home />} />
+        <Route path="/:id/likes" element={<Likes />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/:id/comments" element={<Comments />} />
+
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/chat/:id" element={<Chat />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/friends" element={<Frineds />} />
         <Route path="/following" element={<Following />} />
-        <Route path="/search/:id" Component={Search} />
-        <Route path="/search" Component={Search} />
-        {/* <Route path="/messages" element={<Messages />} /> */}
+
+        <Route path="/search/:id" element={<Search />} />
+        <Route path="/search" element={<Search />} />
+
         <Route path="/notifications" element={<Notification />} />
 
-        <Route path="*" Component={NotFound} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
