@@ -42,7 +42,7 @@ function Sidebar() {
               className="profile_img"
               src={
                 user?.profileImage
-                  ? `https://social-media-platform-production-4442.up.railway.app/${user.profileImage}`
+                  ? `http://localhost:5000/${user.profileImage}`
                   : "default-avatar.png"
               }
               alt=""

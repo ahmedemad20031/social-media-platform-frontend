@@ -27,7 +27,7 @@ function Search() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/search/${id}`,
+        `http://localhost:5000/api/v1/post/search/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -50,7 +50,7 @@ function Search() {
     }
     try {
       const res = await axios.patch(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${post._id}/like`,
+        `http://localhost:5000/api/v1/post/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -74,7 +74,7 @@ function Search() {
       }
 
       const res = await axios.patch(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${post._id}/dislike`,
+        `http://localhost:5000/api/v1/post/${post._id}/dislike`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -137,7 +137,7 @@ function Search() {
                   <img
                     src={
                       item.user?.profileImage
-                        ? `https://social-media-platform-production-4442.up.railway.app/${item.user.profileImage}`
+                        ? `http://localhost:5000/${item.user.profileImage}`
                         : "https://via.placeholder.com/45"
                     }
                     className="rounded-circle"
@@ -167,7 +167,7 @@ function Search() {
                 {item.image && (
                   <img
                     className="img-fluid rounded"
-                    src={`https://social-media-platform-production-4442.up.railway.app/${item.image}`}
+                    src={`http://localhost:5000/${item.image}`}
                     alt="post-img"
                   />
                 )}

@@ -14,7 +14,7 @@ function ResetPassword() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/resetPassword",
+        "http://localhost:5000/api/v1/auth/resetPassword",
         {
           email: localStorage.getItem("email"),
           otp: otp.join(""),
@@ -23,7 +23,7 @@ function ResetPassword() {
       );
       toast.success(res.data.message);
       console.log(res.data);
-      go("/login");
+      go("/");
     } catch (error) {
       toast.error(error.response?.data?.message ?? "An error occurred");
       // console.log(error.response.data);
@@ -36,7 +36,7 @@ function ResetPassword() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/resendforgetotp",
+        "http://localhost:5000/api/v1/auth/resendforgetotp",
         {
           email: localStorage.getItem("email"),
         },

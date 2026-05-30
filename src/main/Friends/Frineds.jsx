@@ -11,7 +11,7 @@ function Friends() {
   async function getFollowers() {
     try {
       const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Followers`,
+        `http://localhost:5000/api/v1/follow/Followers`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -30,7 +30,7 @@ function Friends() {
   async function handleUnfollow(userId) {
     try {
       const res = await axios.post(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Unfollow`,
+        `http://localhost:5000/api/v1/follow/Unfollow`,
         { followId: userId },
         {
           headers: {

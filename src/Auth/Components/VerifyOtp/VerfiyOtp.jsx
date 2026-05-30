@@ -11,11 +11,11 @@ function VerfiyOtp() {
 
   const go = useNavigate();
   const dispatch = useDispatch();
-
+  console.log(localStorage.getItem("email"));
   async function handleVerfiy() {
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/verify_otp",
+        "http://localhost:5000/api/v1/auth/verify_otp",
         {
           otp: otp.join(""),
           email: localStorage.getItem("email"),
@@ -40,7 +40,7 @@ function VerfiyOtp() {
   async function handleRecent() {
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/recent_otp",
+        "http://localhost:5000/api/v1/auth/recent_otp",
         {
           email: localStorage.getItem("email"),
         },

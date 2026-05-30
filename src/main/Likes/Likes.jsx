@@ -12,7 +12,7 @@ function Likes() {
   async function fetchLikes() {
     try {
       const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${id}/likes`,
+        `http://localhost:5000/api/v1/post/${id}/likes`,
       );
       console.log(res.data.data.likes);
       setLikes(res.data.data.likes);
@@ -34,10 +34,7 @@ function Likes() {
         >
           <div>
             {" "}
-            <img
-              src={`https://social-media-platform-production-4442.up.railway.app/${like.profileImage}`}
-              alt=""
-            />
+            <img src={`http://localhost:5000/${like.profileImage}`} alt="" />
           </div>
           <span className="like_icon">
             <AiOutlineLike />

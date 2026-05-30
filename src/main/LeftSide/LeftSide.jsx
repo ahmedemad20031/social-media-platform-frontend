@@ -24,14 +24,11 @@ function LeftSide() {
 
   async function getSuggestion() {
     try {
-      const res = await axios.get(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/suggest/",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get("http://localhost:5000/api/v1/suggest/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       console.log(res.data.data.users);
       setSuggestion(res.data.data.users);
     } catch (error) {
@@ -43,7 +40,7 @@ function LeftSide() {
   async function handlefollow(followId) {
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Follow",
+        "http://localhost:5000/api/v1/follow/Follow",
         { followId },
         {
           headers: {
@@ -55,9 +52,7 @@ function LeftSide() {
       const isFollowing = res.data.data.isFollowing;
       setSuggestion((prev) => prev.filter((user) => user._id !== followId));
 
-      toast.success(
-        isFollowing ? "Followed successfully" : "Unfollowed successfully",
-      );
+      toast.success("Followed successfully");
 
       setSuggestion((prev) =>
         prev.map((user) =>
@@ -69,21 +64,18 @@ function LeftSide() {
     }
   }
   async function getNotifications() {
-    const res = await axios.get(
-      "https://social-media-platform-production-4442.up.railway.app/api/v1/notifications",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const res = await axios.get("http://localhost:5000/api/v1/notifications", {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     dispatch(setNotifications(res.data.data));
   }
   async function handledelete(id) {
     try {
       const res = await axios.delete(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/notifications/${id}`,
+        `http://localhost:5000/api/v1/notifications/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -99,7 +91,7 @@ function LeftSide() {
   }
   async function markAsRead() {
     await axios.put(
-      "https://social-media-platform-production-4442.up.railway.app/api/v1/notifications/read",
+      "http://localhost:5000/api/v1/notifications/read",
       {},
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -125,7 +117,7 @@ function LeftSide() {
               <div className="suggest_item" key={item._id}>
                 <div className="suggest_item_img">
                   <img
-                    src={`https://social-media-platform-production-4442.up.railway.app/${item.profileImage}`}
+                    src={`http://localhost:5000/${item.profileImage}`}
                     alt=""
                   />
                 </div>
@@ -162,7 +154,7 @@ function LeftSide() {
             <div key={n._id} className="notification_item">
               <img
                 className="notification_item_img"
-                src={`https://social-media-platform-production-4442.up.railway.app/${n.sender.profileImage}`}
+                src={`http://localhost:5000/${n.sender.profileImage}`}
               />
 
               <div className="notification_item_info">

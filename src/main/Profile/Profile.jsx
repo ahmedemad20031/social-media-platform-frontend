@@ -44,9 +44,9 @@ function Profile() {
       let url = "";
 
       if (id) {
-        url = `https://social-media-platform-production-4442.up.railway.app/api/v1/auth/getuser/${id}`;
+        url = `http://localhost:5000/api/v1/auth/getuser/${id}`;
       } else {
-        url = `https://social-media-platform-production-4442.up.railway.app/api/v1/auth/profile`;
+        url = `http://localhost:5000/api/v1/auth/profile`;
       }
 
       const res = await axios.get(url, { headers });
@@ -61,7 +61,7 @@ function Profile() {
   async function getFollowers() {
     try {
       const res = await axios.get(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Followers",
+        "http://localhost:5000/api/v1/follow/Followers",
         { headers },
       );
 
@@ -74,7 +74,7 @@ function Profile() {
   async function getFollowing() {
     try {
       const res = await axios.get(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Following",
+        "http://localhost:5000/api/v1/follow/Following",
         { headers },
       );
 
@@ -86,12 +86,9 @@ function Profile() {
 
   async function countPosts() {
     try {
-      const res = await axios.get(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/post/count",
-        {
-          headers,
-        },
-      );
+      const res = await axios.get("http://localhost:5000/api/v1/post/count", {
+        headers,
+      });
 
       setPosts(res.data.data);
     } catch (error) {
@@ -102,7 +99,7 @@ function Profile() {
   async function handleFollow() {
     try {
       await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Follow",
+        "http://localhost:5000/api/v1/follow/Follow",
         {
           followId: profileUser._id,
         },
@@ -121,7 +118,7 @@ function Profile() {
   async function handleUnfollow() {
     try {
       await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Unfollow",
+        "http://localhost:5000/api/v1/follow/Unfollow",
         {
           followId: profileUser._id,
         },
@@ -140,7 +137,7 @@ function Profile() {
   async function handleMessage() {
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/chat/",
+        "http://localhost:5000/api/v1/chat/",
         {
           userId: profileUser._id,
           currentUser: loggedInUser._id,
@@ -167,7 +164,7 @@ function Profile() {
       formdata.append("lastName", lastNameref.current.value);
 
       const res = await axios.put(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/UpdateProfile",
+        "http://localhost:5000/api/v1/auth/UpdateProfile",
         formdata,
         {
           headers,
@@ -204,7 +201,7 @@ function Profile() {
         <img
           src={
             profileUser?.profileImage
-              ? `https://social-media-platform-production-4442.up.railway.app/${profileUser.profileImage}`
+              ? `http://localhost:5000/${profileUser.profileImage}`
               : "/default.png"
           }
           alt=""

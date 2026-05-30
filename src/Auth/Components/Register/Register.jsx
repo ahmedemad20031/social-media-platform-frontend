@@ -36,7 +36,7 @@ function Register() {
       formData.append("profileImage", profileRef.current.files[0]);
 
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/register",
+        "http://localhost:5000/api/v1/auth/register",
         formData,
         {
           headers: {

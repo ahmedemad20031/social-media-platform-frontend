@@ -16,7 +16,7 @@ function Notification() {
 
     try {
       const res = await axios.get(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/notifications",
+        "http://localhost:5000/api/v1/notifications",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ function Notification() {
   async function handledelete(id) {
     try {
       const res = await axios.delete(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/notifications/${id}`,
+        `http://localhost:5000/api/v1/notifications/${id}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
       getNotificationsFromDB();

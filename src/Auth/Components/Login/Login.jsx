@@ -21,7 +21,7 @@ function Login() {
 
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/login",
+        "http://localhost:5000/api/v1/auth/login",
         {
           email: emailRef.current.value,
           password: passwordRef.current.value,
@@ -51,7 +51,7 @@ function Login() {
   async function handleForgetpassword() {
     try {
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/auth/forgetPassword",
+        "http://localhost:5000/api/v1/auth/forgetPassword",
         {
           email: localStorage.getItem("email"),
         },

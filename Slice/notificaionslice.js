@@ -17,16 +17,14 @@ const notificationSlice = createSlice({
         JSON.stringify(state.notifications),
       );
     },
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
-    },
 
     deleteNotification: (state, action) => {
       state.notifications = state.notifications.filter(
         (n) => n._id !== action.payload,
+      );
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(state.notifications),
       );
     },
     markAllRead: (state) => {
@@ -34,14 +32,17 @@ const notificationSlice = createSlice({
         ...n,
         read: true,
       }));
+      localStorage.setItem(
+        "notifications",
+        JSON.stringify(state.notifications),
+      );
     },
   },
 });
 
 export const {
   setNotifications,
-  setLoading,
-  setError,
+
   deleteNotification,
   markAllRead,
 } = notificationSlice.actions;

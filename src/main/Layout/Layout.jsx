@@ -39,6 +39,9 @@ function Layout() {
   const go = useNavigate();
 
   const user = useSelector((state) => state.user.user);
+
+  console.log(user._id);
+
   const profileImage = user?.profileImage;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,7 +56,7 @@ function Layout() {
       formdata.append("title", textref.current.value);
 
       const res = await axios.post(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/post/",
+        "http://localhost:5000/api/v1/post/",
         formdata,
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -71,9 +74,7 @@ function Layout() {
 
   async function getallposts() {
     try {
-      const res = await axios.get(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/post/",
-      );
+      const res = await axios.get("http://localhost:5000/api/v1/post/");
       const fetchedPosts = res.data.data?.posts || res.data.data;
       dispatch(setPosts(fetchedPosts));
     } catch (error) {
@@ -88,7 +89,7 @@ function Layout() {
     }
     try {
       const res = await axios.patch(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${post._id}/like`,
+        `http://localhost:5000/api/v1/post/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -108,7 +109,7 @@ function Layout() {
       }
 
       const res = await axios.patch(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${post._id}/dislike`,
+        `http://localhost:5000/api/v1/post/${post._id}/dislike`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -122,12 +123,9 @@ function Layout() {
 
   async function handleDelete(postId) {
     try {
-      await axios.delete(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${postId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      await axios.delete(`http://localhost:5000/api/v1/post/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       dispatch(deletePost(postId));
       toast.success("Post Deleted");
     } catch (error) {
@@ -138,7 +136,7 @@ function Layout() {
   async function handleUpdate() {
     try {
       const res = await axios.put(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${currentPost._id}`,
+        `http://localhost:5000/api/v1/post/${currentPost._id}`,
         { title: editTitle },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -190,7 +188,7 @@ function Layout() {
               <img
                 src={
                   profileImage
-                    ? `https://social-media-platform-production-4442.up.railway.app/${profileImage}`
+                    ? `http://localhost:5000/${profileImage}`
                     : "https://via.placeholder.com/50"
                 }
                 className="rounded-circle"
@@ -221,7 +219,7 @@ function Layout() {
                     <img
                       src={
                         item.user?.profileImage
-                          ? `https://social-media-platform-production-4442.up.railway.app/${item.user.profileImage}`
+                          ? `http://localhost:5000/${item.user.profileImage}`
                           : "https://via.placeholder.com/45"
                       }
                       className="rounded-circle"
@@ -245,7 +243,7 @@ function Layout() {
                           : ""}
                       </small>
                     </div>
-                    {user._id.toString() === item.user._id.toString() && (
+                    {user._id.toString() === item.user._id?.toString() && (
                       <div className="d-flex gap-2 buttons ">
                         <button
                           className="btn_layout"
@@ -255,7 +253,7 @@ function Layout() {
                         </button>
                         <button
                           className="btn_layout"
-                          onClick={() => handleDelete(item._id)}
+                          onClick={() => handleDelete(item?._id)}
                         >
                           Delete
                         </button>

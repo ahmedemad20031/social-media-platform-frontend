@@ -15,7 +15,7 @@ function Following() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Following`,
+        `http://localhost:5000/api/v1/follow/Following`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ function Following() {
   async function handleunfollow(item) {
     try {
       const res = await axios.post(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/follow/Unfollow`,
+        `http://localhost:5000/api/v1/follow/Unfollow`,
         { followId: item.following._id },
         {
           headers: {

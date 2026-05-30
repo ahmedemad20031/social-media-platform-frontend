@@ -19,7 +19,7 @@ function Comments() {
   async function getComments(id) {
     try {
       const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${id}/comments`,
+        `http://localhost:5000/api/v1/post/${id}/comments`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -37,7 +37,7 @@ function Comments() {
 
     try {
       await axios.post(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${id}/comment`,
+        `http://localhost:5000/api/v1/post/${id}/comment`,
         { content: commentref.current.value },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -53,12 +53,9 @@ function Comments() {
 
   async function deleteComment(commentId) {
     try {
-      await axios.delete(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/post/${id}/comment`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      await axios.delete(`http://localhost:5000/api/v1/post/${id}/comment`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       getComments(id);
     } catch (error) {
@@ -75,9 +72,7 @@ function Comments() {
       <div className="comments_container">
         {comments.map((comment) => (
           <div className="comment" key={comment._id}>
-            <img
-              src={`https://social-media-platform-production-4442.up.railway.app/${comment.user.profileImage}`}
-            />
+            <img src={`http://localhost:5000/${comment.user.profileImage}`} />
 
             <div className="comment_body">
               <div className="comment_header">
