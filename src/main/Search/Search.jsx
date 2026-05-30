@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -8,6 +8,8 @@ import Loading from "../../Loading/Loading";
 import { likePost, dislikePost } from "../../../Slice/Postsilce";
 import { useDispatch, useSelector } from "react-redux";
 import "./Search.css";
+
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
 
 function Search() {
   const { id } = useParams();
@@ -21,13 +23,13 @@ function Search() {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user.user);
 
-  async function getallPostsbysearch(id) {
-    if (!id) return;
+  async function getallPostsbysearch(searchId) {
+    if (!searchId) return;
 
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/v1/post/search/${id}`,
+        `${BASE_URL}/api/v1/post/search/${searchId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -50,7 +52,7 @@ function Search() {
     }
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/post/${post._id}/like`,
+        `${BASE_URL}/api/v1/post/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -67,14 +69,13 @@ function Search() {
   }
 
   async function handledislike(post) {
+    if (user?._id === post.user?._id) {
+      toast.error("You can't dislike your own post");
+      return;
+    }
     try {
-      if (user?._id === post.user?._id) {
-        toast.error("You can't dislike your own post");
-        return;
-      }
-
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/post/${post._id}/dislike`,
+        `${BASE_URL}/api/v1/post/${post._id}/dislike`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -93,6 +94,7 @@ function Search() {
   useEffect(() => {
     getallPostsbysearch(id);
   }, [id]);
+
   if (loading) {
     return <Loading />;
   }
@@ -105,13 +107,21 @@ function Search() {
           className="search-input"
           placeholder="Search..."
           ref={searchref}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              const value = searchref.current?.value?.trim();
+              if (!value) return;
+              go(`/search/${value}`);
+              searchref.current.value = "";
+            }
+          }}
         />
 
         <button
           className="search-btn"
           onClick={() => {
-            const value = searchref.current?.value;
-            if (!value?.trim()) return;
+            const value = searchref.current?.value?.trim();
+            if (!value) return;
             go(`/search/${value}`);
             searchref.current.value = "";
           }}
@@ -122,28 +132,27 @@ function Search() {
 
       <h4 className="mb-4">Results for: {id}</h4>
 
-      {searchResults.length === 0 && (
-        <div className="w-100 vh-100 text-center">
+      {searchResults.length === 0 ? (
+        <div className="w-100 text-center mt-5">
           <h1>No Posts match this Search</h1>
         </div>
-      )}
-
-      <div className="mt-3">
-        {!loading &&
-          searchResults.map((item) => (
+      ) : (
+        <div className="mt-3">
+          {searchResults.map((item) => (
             <div className="card mb-3" key={item._id}>
               <div className="card-body">
                 <div className="d-flex gap-2 align-items-center">
                   <img
                     src={
                       item.user?.profileImage
-                        ? `http://localhost:5000/${item.user.profileImage}`
+                        ? `${BASE_URL}/${item.user.profileImage.replace(/\\/g, "/")}`
                         : "https://via.placeholder.com/45"
                     }
                     className="rounded-circle"
                     width="45"
                     height="45"
                     alt="avatar"
+                    style={{ objectFit: "cover" }}
                   />
                   <div>
                     <Link
@@ -154,7 +163,7 @@ function Search() {
                         {item.user?.firstName} {item.user?.lastName}
                       </h6>
                     </Link>
-                    <small>
+                    <small className="text-muted">
                       {item.createdAt
                         ? new Date(item.createdAt).toLocaleDateString()
                         : ""}
@@ -166,9 +175,14 @@ function Search() {
 
                 {item.image && (
                   <img
-                    className="img-fluid rounded"
-                    src={`http://localhost:5000/${item.image}`}
+                    className="img-fluid rounded mb-2"
+                    src={`${BASE_URL}/${item.image.replace(/\\/g, "/")}`}
                     alt="post-img"
+                    style={{
+                      maxHeight: "400px",
+                      objectFit: "cover",
+                      width: "100%",
+                    }}
                   />
                 )}
 
@@ -196,7 +210,8 @@ function Search() {
               </div>
             </div>
           ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

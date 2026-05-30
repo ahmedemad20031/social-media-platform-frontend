@@ -3,21 +3,19 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import "./Friends.css";
 
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function Friends() {
   const token = localStorage.getItem("token");
-
   const [followers, setFollowers] = useState([]);
 
   async function getFollowers() {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/v1/follow/Followers`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${BASE_URL}/api/v1/follow/Followers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setFollowers(res.data.data || []);
       console.log(res.data.data);
@@ -28,9 +26,11 @@ function Friends() {
   }
 
   async function handleUnfollow(userId) {
+    if (!userId) return;
+
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/v1/follow/Unfollow`,
+        `${BASE_URL}/api/v1/follow/Unfollow`,
         { followId: userId },
         {
           headers: {
@@ -39,7 +39,7 @@ function Friends() {
         },
       );
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Unfollowed successfully");
 
       setFollowers((prev) =>
         prev.filter((item) => item.follower?._id !== userId),
@@ -72,10 +72,10 @@ function Friends() {
               <img
                 src={
                   user?.profileImage
-                    ? `http://localhost:5000/${user.profileImage}`
+                    ? `${BASE_URL}/${user.profileImage.replace(/\\/g, "/")}`
                     : "/default.png"
                 }
-                alt=""
+                alt="profile"
                 className="followerImage"
               />
               <span>

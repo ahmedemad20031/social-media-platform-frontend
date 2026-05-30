@@ -10,6 +10,9 @@ import { Socket } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../../../Slice/userslice.js";
 
+// توحيد الرابط في متغير ثابت لمنع نسيان البروتوكول
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function Login() {
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -20,8 +23,9 @@ function Login() {
     event.preventDefault();
 
     try {
+      // تعديل الرابط هنا وإضافة الـ https:// عبر المتغير الموحد
       const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
+        `${BASE_URL}/api/v1/auth/login`,
         {
           email: emailRef.current.value,
           password: passwordRef.current.value,
@@ -34,13 +38,10 @@ function Login() {
       );
 
       localStorage.setItem("token", res.data.data.token);
-      // localStorage.setItem("user", JSON.stringify(res.data.data.user));
-
       dispatch(setUser(res.data.data.user));
       localStorage.setItem("user", JSON.stringify(res.data.data.user));
 
       toast.success("Login successful");
-
       go("/home");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
@@ -50,12 +51,10 @@ function Login() {
 
   async function handleForgetpassword() {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/forgetPassword",
-        {
-          email: localStorage.getItem("email"),
-        },
-      );
+      // استخدام المتغير الموحد هنا أيضاً لضمان الأمان ونظافة الكود
+      const res = await axios.post(`${BASE_URL}/api/v1/auth/forgetPassword`, {
+        email: localStorage.getItem("email"),
+      });
       toast.success(res.data.message);
       go("/resetpassword");
     } catch (error) {
@@ -95,7 +94,6 @@ function Login() {
         </Form.Group>
         <div className="d-flex flex-column mb-2">
           <Link to={"/register"}>Register</Link>
-
           <Link onClick={handleForgetpassword}>Forget Password?</Link>
         </div>
         <div className="w-100 ">

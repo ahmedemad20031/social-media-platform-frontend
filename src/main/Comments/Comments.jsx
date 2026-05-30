@@ -1,44 +1,44 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useRef } from "react";
 import "./form.css";
-import { setPosts, updatePost } from "../../../Slice/Postsilce";
-import { useDispatch, useSelector } from "react-redux";
+
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function Comments() {
-  // console.log(res.data);
   const [comments, setComments] = useState([]);
   const { id } = useParams();
   const commentref = useRef();
   const token = localStorage.getItem("token");
 
-  async function getComments(id) {
+  async function getComments(postId) {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/v1/post/${id}/comments`,
+        `${BASE_URL}/api/v1/post/${postId}/comments`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
-      setComments(res.data.data.comments);
-      console.log(res.data.data.comments);
+      setComments(res.data.data.comments || res.data.comments || []);
     } catch (error) {
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Failed to load comments");
     }
   }
 
   async function handleCommentSubmit(e) {
     e.preventDefault();
+    const content = commentref.current.value;
+
+    if (!content.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
 
     try {
       await axios.post(
-        `http://localhost:5000/api/v1/post/${id}/comment`,
-        { content: commentref.current.value },
+        `${BASE_URL}/api/v1/post/${id}/comment`,
+        { content: content },
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -47,40 +47,49 @@ function Comments() {
       commentref.current.value = "";
       getComments(id);
     } catch (error) {
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Failed to add comment");
     }
   }
 
   async function deleteComment(commentId) {
     try {
-      await axios.delete(`http://localhost:5000/api/v1/post/${id}/comment`, {
+      await axios.delete(`${BASE_URL}/api/v1/post/${id}/comment/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      toast.success("Comment deleted successfully");
       getComments(id);
     } catch (error) {
-      toast.error(error.response?.data?.message);
+      toast.error(error.response?.data?.message || "Failed to delete comment");
     }
   }
 
   useEffect(() => {
-    getComments(id);
-  }, []);
+    if (id) {
+      getComments(id);
+    }
+  }, [id]);
 
   return (
     <div className="comments">
       <div className="comments_container">
         {comments.map((comment) => (
           <div className="comment" key={comment._id}>
-            <img src={`http://localhost:5000/${comment.user.profileImage}`} />
+            <img
+              src={
+                comment.user?.profileImage
+                  ? `${BASE_URL}/${comment.user.profileImage.replace(/\\/g, "/")}`
+                  : "default-avatar.png"
+              }
+              alt="avatar"
+            />
 
             <div className="comment_body">
               <div className="comment_header">
                 <div>
                   <h5>
-                    {comment.user.firstName} {comment.user.lastName}
+                    {comment.user?.firstName} {comment.user?.lastName}
                   </h5>
-
                   <h6 className="time">
                     {new Date(comment.createdAt).toLocaleString()}
                   </h6>
@@ -88,7 +97,7 @@ function Comments() {
 
                 <button
                   className="delete_btn"
-                  onClick={() => deleteComment(id)}
+                  onClick={() => deleteComment(comment._id)}
                 >
                   🗑️
                 </button>

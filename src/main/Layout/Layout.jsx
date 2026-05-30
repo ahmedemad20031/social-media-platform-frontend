@@ -21,6 +21,8 @@ import {
   dislikePost,
 } from "../../../Slice/Postsilce";
 
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function Layout() {
   const textref = useRef();
   const imgeref = useRef();
@@ -40,7 +42,8 @@ function Layout() {
 
   const user = useSelector((state) => state.user.user);
 
-  console.log(user._id);
+  const currentUserId = user?._id;
+  console.log(currentUserId);
 
   const profileImage = user?.profileImage;
 
@@ -55,11 +58,9 @@ function Layout() {
       }
       formdata.append("title", textref.current.value);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/post/",
-        formdata,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const res = await axios.post(`${BASE_URL}/api/v1/post/`, formdata, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       const newPost = res.data.data?.post || res.data.data || res.data.post;
       dispatch(addPost(newPost));
@@ -74,7 +75,7 @@ function Layout() {
 
   async function getallposts() {
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/post/");
+      const res = await axios.get(`${BASE_URL}/api/v1/post/`);
       const fetchedPosts = res.data.data?.posts || res.data.data;
       dispatch(setPosts(fetchedPosts));
     } catch (error) {
@@ -89,7 +90,7 @@ function Layout() {
     }
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/post/${post._id}/like`,
+        `${BASE_URL}/api/v1/post/${post._id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -109,7 +110,7 @@ function Layout() {
       }
 
       const res = await axios.patch(
-        `http://localhost:5000/api/v1/post/${post._id}/dislike`,
+        `${BASE_URL}/api/v1/post/${post._id}/dislike`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -123,7 +124,7 @@ function Layout() {
 
   async function handleDelete(postId) {
     try {
-      await axios.delete(`http://localhost:5000/api/v1/post/${postId}`, {
+      await axios.delete(`${BASE_URL}/api/v1/post/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       dispatch(deletePost(postId));
@@ -136,7 +137,7 @@ function Layout() {
   async function handleUpdate() {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/v1/post/${currentPost._id}`,
+        `${BASE_URL}/api/v1/post/${currentPost._id}`,
         { title: editTitle },
         { headers: { Authorization: `Bearer ${token}` } },
       );
@@ -188,13 +189,13 @@ function Layout() {
               <img
                 src={
                   profileImage
-                    ? `http://localhost:5000/${profileImage}`
+                    ? `${BASE_URL}/${profileImage.replace(/\\/g, "/")}`
                     : "https://via.placeholder.com/50"
                 }
                 className="rounded-circle"
                 width="50px"
                 height="50px"
-                alt=""
+                alt="profile"
               />
               <input
                 className="form-control nam"
@@ -219,13 +220,13 @@ function Layout() {
                     <img
                       src={
                         item.user?.profileImage
-                          ? `http://localhost:5000/${item.user.profileImage}`
+                          ? `${BASE_URL}/${item.user.profileImage.replace(/\\/g, "/")}`
                           : "https://via.placeholder.com/45"
                       }
                       className="rounded-circle"
                       width="45"
                       height="45"
-                      alt=""
+                      alt="avatar"
                     />
 
                     <div>
@@ -243,22 +244,24 @@ function Layout() {
                           : ""}
                       </small>
                     </div>
-                    {user._id.toString() === item.user._id?.toString() && (
-                      <div className="d-flex gap-2 buttons ">
-                        <button
-                          className="btn_layout"
-                          onClick={() => handleEdit(item)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn_layout"
-                          onClick={() => handleDelete(item?._id)}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                    {user?._id &&
+                      item.user?._id &&
+                      user._id.toString() === item.user._id.toString() && (
+                        <div className="d-flex gap-2 buttons ">
+                          <button
+                            className="btn_layout"
+                            onClick={() => handleEdit(item)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn_layout"
+                            onClick={() => handleDelete(item?._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                   </div>
 
                   <p className="mt-3">{item.title}</p>
@@ -266,8 +269,8 @@ function Layout() {
                   {item.image && (
                     <img
                       className="img-fluid rounded"
-                      src={`http://localhost:5000/${item.image}`}
-                      alt=""
+                      src={`${BASE_URL}/${item.image.replace(/\\/g, "/")}`}
+                      alt="post-media"
                     />
                   )}
 

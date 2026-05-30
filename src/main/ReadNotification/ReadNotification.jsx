@@ -1,13 +1,17 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function ReadNotification() {
   const token = localStorage.getItem("token");
 
-  async function update() {
+  async function updateNotificationStatus() {
+    if (!token) return;
+
     try {
       const res = await axios.put(
-        "https://social-media-platform-production-4442.up.railway.app/api/v1/notification/update",
+        `${BASE_URL}/api/v1/notifications/read`,
         {},
         {
           headers: {
@@ -16,17 +20,23 @@ function ReadNotification() {
         },
       );
 
-      console.log(res.data.message);
+      console.log(
+        "Notifications update response:",
+        res.data?.message || "Success",
+      );
     } catch (error) {
-      console.log(error);
+      console.error(
+        "Error updating notifications read status:",
+        error.response?.data?.message || error.message,
+      );
     }
   }
 
   useEffect(() => {
-    update();
+    updateNotificationStatus();
   }, []);
 
-  return <div></div>;
+  return null;
 }
 
 export default ReadNotification;

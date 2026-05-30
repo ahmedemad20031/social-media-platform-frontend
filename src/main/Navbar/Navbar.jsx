@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Navbar as NAVBAR, Nav } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import "./Navbar.css";
 import axios from "axios";
 import socket from "../../socket.js";
@@ -8,16 +8,16 @@ import { FaBell } from "react-icons/fa";
 import { AiOutlineHome } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { setNotifications } from "../../../Slice/notificaionslice.js";
-import { NavLink } from "react-router-dom";
 import { CiSearch } from "react-icons/ci";
+
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
 
 function Navbar() {
   const [theme, setTheme] = useState("light");
-
   const token = localStorage.getItem("token");
-
   const dispatch = useDispatch();
   const searchinput = useRef();
+  const go = useNavigate();
 
   const notifications = useSelector(
     (state) => state.notifications.notifications || [],
@@ -30,7 +30,12 @@ function Navbar() {
   const unreadCount = notifications.filter((n) => !n.read).length;
   console.log(unreadCount);
 
-  const go = useNavigate();
+  function handleSearch() {
+    const query = searchinput.current?.value?.trim();
+    if (query) {
+      go(`/search/${query}`);
+    }
+  }
 
   useEffect(() => {
     if (!currentUserId) return;
@@ -43,7 +48,6 @@ function Navbar() {
 
     socket.on("getNotification", (data) => {
       dispatch(setNotifications(data));
-
       console.log("New notification received:", data);
     });
 
@@ -55,18 +59,22 @@ function Navbar() {
 
   return (
     <div className="Nav">
-      <h4 className="logo">ConnectHub</h4>
+      <h4
+        className="logo"
+        onClick={() => go("/home")}
+        style={{ cursor: "pointer" }}
+      >
+        ConnectHub
+      </h4>
       <div className="search">
         <input
           className="search_input"
           type="search"
           placeholder="Search...."
           ref={searchinput}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         />
-        <button
-          className="icon_button"
-          onClick={() => go(`/search/${searchinput.current.value}`)}
-        >
+        <button className="icon_button" onClick={handleSearch}>
           <CiSearch />
         </button>
       </div>
@@ -82,7 +90,6 @@ function Navbar() {
             className="position-relative"
           >
             <FaBell className="i" />
-
             {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
           </Nav.Link>
 
@@ -91,7 +98,7 @@ function Navbar() {
               className="nav_img"
               src={
                 user?.profileImage
-                  ? `http://localhost:5000/${user.profileImage}`
+                  ? `${BASE_URL}/${user.profileImage.replace(/\\/g, "/")}`
                   : "/default-avatar.png"
               }
               alt="profile"

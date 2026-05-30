@@ -1,46 +1,56 @@
-import React, { use, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LeftSide.css";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import notificationSlice from "../../../Slice/notificaionslice";
 import {
   setNotifications,
   deleteNotification,
   markAllRead,
 } from "../../../Slice/notificaionslice";
+
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
+const NOTIFICATION_TEXTS = {
+  like: "liked your post",
+  comment: "commented on your post",
+  follow: "started following you",
+};
+
 function LeftSide() {
   const token = localStorage.getItem("token");
-  const [suggestion, setSuggestion] = React.useState([]);
+  const [suggestion, setSuggestion] = useState([]);
 
   const dispatch = useDispatch();
 
-  const notifications = useSelector(
-    (state) => state.notifications.notifications,
+  const notificationsFromRedux = useSelector(
+    (state) => state.notifications?.notifications,
   );
+  const notifications = Array.isArray(notificationsFromRedux)
+    ? notificationsFromRedux
+    : [];
 
   console.log(notifications);
 
   async function getSuggestion() {
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/suggest/", {
+      const res = await axios.get(`${BASE_URL}/api/v1/suggest/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data.data.users);
-      setSuggestion(res.data.data.users);
+      setSuggestion(res.data.data?.users || []);
     } catch (error) {
-      toast.error(error.response?.data?.message);
-      console.log(error.response?.data?.message);
+      toast.error(
+        error.response?.data?.message || "Error fetching suggestions",
+      );
     }
   }
 
   async function handlefollow(followId) {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/v1/follow/Follow",
+        `${BASE_URL}/api/v1/follow/Follow`,
         { followId },
         {
           headers: {
@@ -49,62 +59,68 @@ function LeftSide() {
         },
       );
 
-      const isFollowing = res.data.data.isFollowing;
-      setSuggestion((prev) => prev.filter((user) => user._id !== followId));
-
-      toast.success("Followed successfully");
+      const isFollowing = res.data.data?.isFollowing;
 
       setSuggestion((prev) =>
         prev.map((user) =>
-          user._id === followId ? { ...user, isFollowing } : user,
+          user._id === followId ? { ...user, isFollowing: true } : user,
         ),
       );
+
+      toast.success("Followed successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to follow user");
     }
   }
-  async function getNotifications() {
-    const res = await axios.get("http://localhost:5000/api/v1/notifications", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
 
-    dispatch(setNotifications(res.data.data));
-  }
-  async function handledelete(id) {
+  async function getNotifications() {
     try {
-      const res = await axios.delete(
-        `http://localhost:5000/api/v1/notifications/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${BASE_URL}/api/v1/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
-      dispatch(deleteNotification(id));
-      toast.success("notificatio deleted");
+      });
+      dispatch(setNotifications(res.data.data || []));
     } catch (error) {
-      console.log(error.response.message);
-      toast.error(error.response?.data?.message);
+      console.log("Error fetching notifications", error);
     }
   }
-  async function markAsRead() {
-    await axios.put(
-      "http://localhost:5000/api/v1/notifications/read",
-      {},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
 
-    dispatch(markAllRead());
+  async function handledelete(id) {
+    try {
+      await axios.delete(`${BASE_URL}/api/v1/notifications/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch(deleteNotification(id));
+      toast.success("Notification deleted");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Delete failed");
+    }
+  }
+
+  async function markAsRead() {
+    try {
+      await axios.put(
+        `${BASE_URL}/api/v1/notifications/read`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      dispatch(markAllRead());
+      toast.success("All notifications marked as read");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Operation failed");
+    }
   }
 
   useEffect(() => {
     getSuggestion();
     getNotifications();
   }, []);
+
   return (
     <div className="Left_side">
       <div className="Left_side_box">
@@ -117,16 +133,19 @@ function LeftSide() {
               <div className="suggest_item" key={item._id}>
                 <div className="suggest_item_img">
                   <img
-                    src={`http://localhost:5000/${item.profileImage}`}
-                    alt=""
+                    src={
+                      item.profileImage
+                        ? `${BASE_URL}/${item.profileImage.replace(/\\/g, "/")}`
+                        : "/default.png"
+                    }
+                    alt="avatar"
                   />
                 </div>
                 <div className="suggest_item_info">
                   <h5>
-                    {item.firstName}
-                    {item.lastName}
+                    {item.firstName} {item.lastName}
                   </h5>
-                  <p>{item.username}</p>
+                  <p>@{item.username}</p>
                   <button
                     className="suggest_item_btn"
                     onClick={() => handlefollow(item._id)}
@@ -141,36 +160,42 @@ function LeftSide() {
       </div>
 
       <div className="suggest notifications">
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex justify-content-between align-items-center mb-2">
           <h4>Notifications</h4>
           <button onClick={markAsRead} className="w-50 markasread">
             Mark all as read
           </button>
         </div>
         {notifications.length === 0 ? (
-          <p>No notifications</p>
+          <p className="text-muted">No notifications</p>
         ) : (
           notifications.slice(0, 5).map((n) => (
             <div key={n._id} className="notification_item">
               <img
                 className="notification_item_img"
-                src={`http://localhost:5000/${n.sender.profileImage}`}
+                src={
+                  n.sender?.profileImage
+                    ? `${BASE_URL}/${n.sender.profileImage.replace(/\\/g, "/")}`
+                    : "/default.png"
+                }
+                alt="sender"
               />
 
               <div className="notification_item_info">
                 <p>
-                  {n.sender?.firstName} {n.sender?.lastName}
+                  <strong>
+                    {n.sender?.firstName} {n.sender?.lastName}
+                  </strong>{" "}
                   <span>
-                    {{
-                      like: "liked your post",
-                      comment: "commented on your post",
-                      follow: "started following you",
-                    }[n.type] || "new notification"}
+                    {NOTIFICATION_TEXTS[n.type] ||
+                      "sent you a new notification"}
                   </span>
                 </p>
                 <div className="d-flex justify-content-between align-items-center">
-                  <small>
-                    {new Date(n.createdAt).toLocaleString().split(",")[0]}
+                  <small className="text-muted">
+                    {n.createdAt
+                      ? new Date(n.createdAt).toLocaleDateString()
+                      : ""}
                   </small>
 
                   <button

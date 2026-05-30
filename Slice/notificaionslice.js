@@ -1,7 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  notifications: JSON.parse(localStorage.getItem("notifications")) || [],
+  notifications:
+    localStorage.getItem("notifications") &&
+    localStorage.getItem("notifications") !== "undefined"
+      ? JSON.parse(localStorage.getItem("notifications"))
+      : [],
   loading: false,
   error: null,
 };

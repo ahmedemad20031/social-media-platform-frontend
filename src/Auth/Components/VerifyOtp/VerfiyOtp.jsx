@@ -6,23 +6,31 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../../Slice/userslice";
 
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function VerfiyOtp() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [loading, setLoading] = useState(false);
 
   const go = useNavigate();
   const dispatch = useDispatch();
-  console.log(localStorage.getItem("email"));
-  async function handleVerfiy() {
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/verify_otp",
-        {
-          otp: otp.join(""),
-          email: localStorage.getItem("email"),
-        },
-      );
 
-      toast.success(res.data.message);
+  async function handleVerfiy() {
+    const fullOtp = otp.join("");
+
+    if (fullOtp.length < 6) {
+      toast.error("Please enter the complete 6-digit OTP");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.post(`${BASE_URL}/api/v1/auth/verify_otp`, {
+        otp: fullOtp,
+        email: localStorage.getItem("email"),
+      });
+
+      toast.success(res.data.message || "OTP Verified Successfully!");
 
       localStorage.setItem("token", res.data.data.token);
       localStorage.setItem("userId", res.data.data.user._id);
@@ -34,22 +42,24 @@ function VerfiyOtp() {
     } catch (error) {
       toast.error(error.response?.data?.message ?? "An error occurred");
       console.log(error.response?.data);
+    } finally {
+      setLoading(false);
     }
   }
 
   async function handleRecent() {
+    setLoading(true);
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/recent_otp",
-        {
-          email: localStorage.getItem("email"),
-        },
-      );
+      const res = await axios.post(`${BASE_URL}/api/v1/auth/recent_otp`, {
+        email: localStorage.getItem("email"),
+      });
 
-      toast.success(res.data.message);
+      toast.success(res.data.message || "OTP Resent Successfully!");
     } catch (error) {
       toast.error(error.response?.data?.message ?? "An error occurred");
       console.log(error.response?.data);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -65,9 +75,26 @@ function VerfiyOtp() {
                 value={data}
                 maxLength={1}
                 onChange={(e) => {
-                  const newOtp = [...otp];
-                  newOtp[index] = e.target.value;
-                  setOtp(newOtp);
+                  const val = e.target.value;
+
+                  if (/^[0-9]?$/.test(val)) {
+                    const newOtp = [...otp];
+                    newOtp[index] = val;
+                    setOtp(newOtp);
+
+                    if (val && e.target.nextSibling) {
+                      e.target.nextSibling.focus();
+                    }
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Backspace" &&
+                    !otp[index] &&
+                    e.target.previousSibling
+                  ) {
+                    e.target.previousSibling.focus();
+                  }
                 }}
               />
             );
@@ -75,9 +102,13 @@ function VerfiyOtp() {
         </div>
 
         <div className="verfiy_buttons">
-          <button onClick={handleVerfiy}>VerfiyOtp</button>
+          <button onClick={handleVerfiy} disabled={loading}>
+            {loading ? "Verifying..." : "Verify OTP"}
+          </button>
 
-          <button onClick={handleRecent}>RecentOtp</button>
+          <button onClick={handleRecent} disabled={loading}>
+            {loading ? "Sending..." : "Resend OTP"}
+          </button>
         </div>
       </div>
     </div>

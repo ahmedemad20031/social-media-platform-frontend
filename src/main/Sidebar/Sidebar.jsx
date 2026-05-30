@@ -2,17 +2,21 @@ import React from "react";
 import "./side.css";
 import { Button } from "react-bootstrap";
 import axios from "axios";
-import { Link, NavLink } from "react-router-dom";
-import { AiOutlineHome } from "react-icons/ai";
-import { AiOutlineLogout } from "react-icons/ai";
-import { AiOutlineUser } from "react-icons/ai";
-import { AiOutlineMessage } from "react-icons/ai";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import {
+  AiOutlineHome,
+  AiOutlineLogout,
+  AiOutlineUser,
+  AiOutlineMessage,
+} from "react-icons/ai";
 import { SlUserFollowing } from "react-icons/sl";
 
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../../../Slice/userslice";
 import { useDispatch, useSelector } from "react-redux";
+
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function Sidebar() {
   const go = useNavigate();
   const dispatch = useDispatch();
@@ -33,30 +37,31 @@ function Sidebar() {
   if (!user) {
     return null;
   }
+
   return (
     <div className="d-flex flex-column justify-content-between side">
       <div>
         <nav className="side_item d-flex flex-column gap-2">
-          <div className="d-flex align-items-center gap-2 mb-2">
+          <div className="d-flex align-items-center gap-2 mb-2 px-2">
             <img
               className="profile_img"
               src={
                 user?.profileImage
-                  ? `http://localhost:5000/${user.profileImage}`
-                  : "default-avatar.png"
+                  ? `${BASE_URL}/${user.profileImage.replace(/\\/g, "/")}`
+                  : "/default-avatar.png"
               }
-              alt=""
+              alt="avatar"
+              style={{ objectFit: "cover" }}
             />
-            <div className="d-flex flex-column m-0 nan ">
-              <p className="m-0 p-0">
-                {user?.firstName}
-                {user?.lastName}
+            <div className="d-flex flex-column m-0 nan">
+              <p className="m-0 p-0 fw-bold">
+                {user?.firstName} {user?.lastName}
               </p>
-              <p className="m-0 p-0">{user.email?.split("@")[0]}</p>
+              <small className="text-muted">{user?.email?.split("@")[0]}</small>
             </div>
           </div>
+
           <NavLink
-            as={NavLink}
             to="/home"
             className={({ isActive }) => (isActive ? "nav active" : "nav")}
           >
@@ -87,12 +92,13 @@ function Sidebar() {
             <AiOutlineUser />
             <span>Friends</span>
           </NavLink>
+
           <NavLink
             to="/following"
             className={({ isActive }) => (isActive ? "nav active" : "nav")}
           >
             <SlUserFollowing />
-            <span>following</span>
+            <span>Following</span>
           </NavLink>
         </nav>
       </div>

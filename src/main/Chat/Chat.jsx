@@ -8,6 +8,8 @@ import { FaSearch } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
 
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
+
 function Chat() {
   const { id } = useParams();
   const inputref = useRef();
@@ -17,24 +19,18 @@ function Chat() {
   const [chat, setChat] = useState([]);
 
   const token = localStorage.getItem("token");
-
   const currentUserId = JSON.parse(localStorage.getItem("user"))._id;
-  console.log(currentUserId);
 
   const currentChat = chat.find((c) => c._id === id);
-
   const otherUser = currentChat?.members?.find((m) => m._id !== currentUserId);
 
   async function getallmessage() {
     try {
-      const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/message/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${BASE_URL}/api/v1/message/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       setMessages(res.data.data || res.data);
     } catch (error) {
       console.log(error.response?.data?.message);
@@ -47,7 +43,7 @@ function Chat() {
       if (!content.trim()) return;
 
       const res = await axios.post(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/message/`,
+        `${BASE_URL}/api/v1/message/`,
         { content, chat: id },
         {
           headers: {
@@ -58,7 +54,8 @@ function Chat() {
 
       inputref.current.value = "";
 
-      // setMessages((prev) => [...prev, res.data.data]);
+      const newMessage = res.data.data || res.data;
+      setMessages((prev) => [...prev, newMessage]);
       toast.success(res.data.message || "Message sent");
       inputref.current?.focus();
     } catch (error) {
@@ -69,14 +66,11 @@ function Chat() {
 
   async function getallchat() {
     try {
-      const res = await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/chat/`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await axios.get(`${BASE_URL}/api/v1/chat/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       setChat(res.data.data || res.data);
     } catch (error) {
       console.log(error.response?.data?.message);
@@ -86,14 +80,11 @@ function Chat() {
 
   async function getchat(chatId) {
     try {
-      await axios.get(
-        `https://social-media-platform-production-4442.up.railway.app/api/v1/chat/${chatId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.get(`${BASE_URL}/api/v1/chat/${chatId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       go(`/chat/${chatId}`);
     } catch (error) {
       console.log(error.response?.data?.message);
@@ -149,7 +140,7 @@ function Chat() {
                 <img
                   src={
                     chatPartner?.profileImage
-                      ? `http://localhost:5000/${chatPartner.profileImage}`
+                      ? `${BASE_URL}/${chatPartner.profileImage.replace(/\\/g, "/")}`
                       : "default-avatar.png"
                   }
                   alt="avatar"
@@ -183,10 +174,11 @@ function Chat() {
               <button className="back_btn" onClick={() => go("/chat")}>
                 <FaArrowLeft />
               </button>
+
               <img
                 src={
                   otherUser?.profileImage
-                    ? `http://localhost:5000/${otherUser.profileImage}`
+                    ? `${BASE_URL}/${otherUser.profileImage.replace(/\\/g, "/")}`
                     : "default-avatar.png"
                 }
                 alt="profile"

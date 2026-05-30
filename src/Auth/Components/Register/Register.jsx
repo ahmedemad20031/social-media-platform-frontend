@@ -1,13 +1,13 @@
-import React, { use, useRef } from "react";
-import { Form, Button } from "react-bootstrap";
+import React, { useRef } from "react";
+import { Form } from "react-bootstrap";
 import "./Register.css";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-import { Link } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import Loading from "../../../Loading/Loading";
+
+// توحيد الرابط في متغير ثابت لضمان إرسال الطلبات مباشرة للسيرفر أونلاين
+const BASE_URL = "https://social-media-platform-production-42b8.up.railway.app";
 
 function Register() {
   const [loading, setLoading] = React.useState(false);
@@ -32,11 +32,11 @@ function Register() {
       formData.append("email", emailRef.current.value);
       formData.append("password", passwordRef.current.value);
       formData.append("phone", phoneRef.current.value);
-
       formData.append("profileImage", profileRef.current.files[0]);
 
+      // استخدام المتغير الموحد BASE_URL هنا
       const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/register",
+        `${BASE_URL}/api/v1/auth/register`,
         formData,
         {
           headers: {
@@ -46,7 +46,7 @@ function Register() {
       );
 
       localStorage.setItem("email", emailRef.current.value);
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Registration successful!");
       go("/verify-otp");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -56,9 +56,6 @@ function Register() {
     }
   }
 
-  // if (loading) {
-  //   return <Loading />;
-  // }
   return (
     <div className="register">
       <Form className="register-form p-3" onSubmit={handlesubmit}>
@@ -118,6 +115,7 @@ function Register() {
             required
           />
         </Form.Group>
+
         <Form.Group className="mb-3">
           <Form.Label htmlFor="profile" className="text-light">
             Profile
