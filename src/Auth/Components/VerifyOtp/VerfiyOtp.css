@@ -88,3 +88,10 @@ button:hover {
 button:active {
     transform: scale(0.98);
 }
+
+@media (max-width:375px) {
+
+    .verfiy div {
+        width: 80%;
+    }
+}
