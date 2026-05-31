@@ -92,10 +92,15 @@ button:active {
 @media (max-width:375px) {
 
     .verfiy div {
-        width: 80%;
+        max-width: 350px;
     }
 
     .otp-inputs {
         width: 80%;
+    }
+
+    .otp-inputs input {
+        max-width: 40px;
+        height: 40px;
     }
 }
