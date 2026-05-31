@@ -11,7 +11,7 @@
 }
 
 .verfiy div {
-    width: 500px;
+    max-width: 500px;
 }
 
 
@@ -23,7 +23,7 @@
 }
 
 .otp-inputs input {
-    width: 60px;
+    max-width: 60px;
     height: 60px;
 
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -50,7 +50,7 @@
 }
 
 .verfiy_buttons {
-    width: 500px;
+    max-width: 500px;
 
 }
 
