@@ -49,12 +49,10 @@ function App() {
     <div>
       <Toaster position="top-center" />
       <Routes>
-        {/* مسارات المصادقة (مستقرة ولا تتأثر) */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-otp" element={<VerfiyOtp />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        {/* المسارات الثابتة الواضحة صريحة (وضعناها بالأعلى لتجنب التضارب) */}
         <Route path="/home" element={<Home />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/chat/:id" element={<Chat />} />
@@ -64,12 +62,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/search" element={<Search />} />
         <Route path="/search/:id" element={<Search />} />
-        {/* المسارات الديناميكية (تم نقلها للأسفل عشان الـ Router يطابق الثوابت أولاً) */}
         <Route path="/profile/:id" element={<Profile />} />
         <Route path="/posts/:id/likes" element={<Likes />} />{" "}
-        {/* 💡 نصيحة: تغيير /:id/likes لـ /posts/:id/likes يمنع أي تضارب مستقبلي كلياً */}
         <Route path="/posts/:id/comments" element={<Comments />} />
-        {/* صفحة الخطأ الافتراضية */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
