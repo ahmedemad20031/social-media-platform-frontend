@@ -292,7 +292,7 @@ function Layout() {
                     </button>
 
                     <button
-                      onClick={() => go(`/${item._id}/comments`)}
+                      onClick={() => go(`/posts/${item._id}/comments`)}
                       className="action-btn"
                     >
                       <FaRegComment className="action-icon" />
